@@ -1,1 +1,1 @@
-# JavaUltimate2022
+# Homeworks for JavaUltimate2022
