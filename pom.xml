@@ -18,6 +18,7 @@
         <module>lesson3-algorithms</module>
         <module>lesson4-data-structures</module>
         <module>java-fundamentals-utils</module>
+        <module>lesson5-java-collections</module>
     </modules>
 
     <dependencies>
