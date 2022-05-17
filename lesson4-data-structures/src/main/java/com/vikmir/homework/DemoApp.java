@@ -1,6 +1,7 @@
-package com.vikmir;
+package com.vikmir.homework;
 
 import com.vikmir.data.Accounts;
+import com.vikmir.homework.HashTable;
 
 import java.time.LocalDate;
 

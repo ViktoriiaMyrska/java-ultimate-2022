@@ -1,4 +1,4 @@
-package com.vikmir;
+package com.vikmir.homework;
 
 /**
  * A simple implementation of the Hash Table that allows storing a generic key-value pair. The table itself is based
@@ -15,6 +15,15 @@ package com.vikmir;
  * @param <V> value type parameter
  */
 public class HashTable<K, V> {
+
+    static final int DEFAULT_INITIAL_CAPACITY = 16;
+    static final int CAPACITY_MULTIPLIER = 2;
+    int size;
+    Node<K, V>[] table;
+
+    public HashTable() {
+        this.table = new Node[DEFAULT_INITIAL_CAPACITY];
+    }
 
     /**
      * Puts a new element to the table by its key. If there is an existing element by such key then it gets replaced

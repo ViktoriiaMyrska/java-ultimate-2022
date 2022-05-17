@@ -1,4 +1,4 @@
-package com.vikmir;
+package com.vikmir.homework;
 
 /**
  * A generic class Node that supports two type params: one for the key and one for the value.
