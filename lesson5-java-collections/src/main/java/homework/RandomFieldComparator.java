@@ -1,6 +1,16 @@
 package homework;
 
+import lombok.SneakyThrows;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
+
+import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.ObjectUtils.allNull;
 
 /**
  * A generic comparator that is comparing a random field of the given class. The field is either primitive or
@@ -13,8 +23,12 @@ import java.util.Comparator;
  */
 public class RandomFieldComparator<T> implements Comparator<T> {
 
+    Class<T> targetType;
+    Field comparingField;
+    boolean compareOnlyAccessibleFields;
+
     public RandomFieldComparator(Class<T> targetType) {
-        this(targetType, true);
+        this(targetType, false);
     }
 
     /**
@@ -25,16 +39,51 @@ public class RandomFieldComparator<T> implements Comparator<T> {
      * @param compareOnlyAccessibleFields config property indicating if only publicly accessible fields can be used
      */
     public RandomFieldComparator(Class<T> targetType, boolean compareOnlyAccessibleFields) {
-        throw new UnsupportedOperationException("This method should be implemented"); // todo:
+        this.targetType = targetType;
+        this.compareOnlyAccessibleFields = compareOnlyAccessibleFields;
+        Field[] fields;
+        if(compareOnlyAccessibleFields){
+            fields = targetType.getFields();
+        } else {
+            fields = targetType.getDeclaredFields();
+        }
+        List<Field> comparableFields = Arrays.stream(fields)
+                .filter(field -> field.getType().isPrimitive() || Comparable.class.isAssignableFrom(field.getType()))
+                .toList();
+        int randomFieldIndex;
+        if (comparableFields.size() > 0) {
+            randomFieldIndex = ThreadLocalRandom.current().nextInt(comparableFields.size());
+            comparingField = comparableFields.get(randomFieldIndex);
+        } else {
+            throw new IllegalArgumentException("No comparable fields!");
+        }
     }
 
     /**
      * Compares two objects of the class T by the value of the field that was randomly chosen. It allows null values
      * for the fields, and it treats null value grater than a non-null value (nulls last).
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SneakyThrows
     @Override
     public int compare(T o1, T o2) {
-        throw new UnsupportedOperationException("This method should be implemented"); // todo:
+        Objects.requireNonNull(o1);
+        Objects.requireNonNull(o2);
+
+        comparingField.setAccessible(true);
+        Comparable field1 = (Comparable) comparingField.get(o1);
+        Comparable field2 = (Comparable) comparingField.get(o2);
+        comparingField.setAccessible(false);
+
+        if (allNull(field1, field2)) {
+            return 0;
+        } else if (isNull(field1)) {
+            return 1;
+        } else if (isNull(field2)) {
+            return -1;
+        } else {
+            return field1.compareTo(field2);
+        }
     }
 
     /**
@@ -45,6 +94,7 @@ public class RandomFieldComparator<T> implements Comparator<T> {
      */
     @Override
     public String toString() {
-        throw new UnsupportedOperationException("This method should be implemented"); // todo:
+        return String.format("Random field comparator of class '%s' is comparing '%s'", targetType.getSimpleName(), comparingField.getName());
     }
+
 }
