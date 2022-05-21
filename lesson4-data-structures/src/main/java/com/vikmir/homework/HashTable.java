@@ -1,5 +1,7 @@
 package com.vikmir.homework;
 
+import java.util.Objects;
+
 /**
  * A simple implementation of the Hash Table that allows storing a generic key-value pair. The table itself is based
  * on the array of {@link Node} objects.
@@ -16,13 +18,23 @@ package com.vikmir.homework;
  */
 public class HashTable<K, V> {
 
-    static final int DEFAULT_INITIAL_CAPACITY = 16;
-    static final int CAPACITY_MULTIPLIER = 2;
-    int size;
-    Node<K, V>[] table;
+    private int size = 0;
+    private Node<K, V>[] buckets;
 
+    @SuppressWarnings("unchecked")
     public HashTable() {
-        this.table = new Node[DEFAULT_INITIAL_CAPACITY];
+        buckets = new Node[16];
+    }
+
+    static class Node<K, V> {
+        K key;
+        V value;
+        Node<K, V> next;
+
+        Node(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
     }
 
     /**
@@ -35,7 +47,37 @@ public class HashTable<K, V> {
      * @return old value or null
      */
     public V put(K key, V value) {
-        throw new UnsupportedOperationException("You should implement a method that throws this exception");
+        Objects.requireNonNull(key);
+        int index = calculateIndex(key.hashCode());
+        if (buckets[index] == null) {
+            buckets[index] = new Node<>(key, value);
+            size++;
+            if (buckets.length == size) {
+                resize(buckets.length * 2);
+            }
+        } else {
+            Node<K, V> bucket = buckets[index];
+            if (bucket.key.equals(key)) {
+                V existingValue = bucket.value;
+                bucket.value = value;
+                return existingValue;
+            } else {
+                if (bucket.next == null) {
+                    bucket.next = new Node<>(key, value);
+                } else {
+                    while (bucket.next != null) {
+                        if (bucket.key.equals(key)) {
+                            V existingValue = bucket.value;
+                            bucket.value = value;
+                            return existingValue;
+                        } else {
+                            bucket = bucket.next;
+                        }
+                    }
+                }
+            }
+        }
+        return value;
     }
 
     /**
@@ -46,6 +88,41 @@ public class HashTable<K, V> {
      * ...
      */
     public void printTable() {
-        throw new UnsupportedOperationException("You should implement a method that throws this exception");
+        for (int i = 0; i < buckets.length; i++) {
+            System.out.print(i + ": ");
+            if (buckets[i] != null) {
+                System.out.print(buckets[i].key + " " + buckets[i].value);
+                if (buckets[i].next != null) {
+                    Node<K, V> current = buckets[i];
+                    while (current.next != null) {
+                        System.out.print(" -> " + buckets[i].next.key + " " + buckets[i].next.value);
+                        current = current.next;
+                    }
+                }
+                System.out.println();
+            } else {
+                System.out.println();
+            }
+        }
     }
+
+    private int calculateIndex(int hash) {
+        return Math.abs(hash) % buckets.length;
+    }
+
+    private void resize(int newCapacity) {
+        Node<K, V>[] currentBuckets = buckets;
+        buckets = new Node[newCapacity];
+        for (Node<K, V> bucket : currentBuckets) {
+            if (bucket != null) {
+                Node<K, V> current = bucket;
+                put(current.key, current.value);
+                while (current.next != null) {
+                    current = current.next;
+                    put(current.key, current.value);
+                }
+            }
+        }
+    }
+
 }
