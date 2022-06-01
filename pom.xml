@@ -22,6 +22,7 @@
         <module>lesson6-OOP</module>
         <module>lesson7-functional-programming</module>
         <module>lesson8-declarative-data-processing</module>
+        <module>lesson9-concurrency</module>
     </modules>
 
     <dependencies>
