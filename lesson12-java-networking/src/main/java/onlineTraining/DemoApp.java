@@ -19,23 +19,23 @@ public class DemoApp {
      * @param args
      */
 
-    @SneakyThrows
-    public static void main(String[] args) {
-        try(var socket = new Socket("93.175.204.87", 8899)){
-            var outputStream = socket.getOutputStream();
-            var writer = new PrintWriter(new OutputStreamWriter(outputStream));
-            writer.println("Hello from Victoria");
-            writer.flush();
-        }
-    }
-
-    @SneakyThrows
-    public void sendHttpRequest(){
-        @Cleanup var socket = new Socket();
-        var inetAddress = new InetSocketAddress("93.175.204.87", 8080);
-        socket.connect(inetAddress);
-        
-    }
+//    @SneakyThrows
+//    public static void main(String[] args) {
+//        try(var socket = new Socket("93.175.204.87", 8899)){
+//            var outputStream = socket.getOutputStream();
+//            var writer = new PrintWriter(new OutputStreamWriter(outputStream));
+//            writer.println("Hello from Victoria");
+//            writer.flush();
+//        }
+//    }
+//
+//    @SneakyThrows
+//    public void sendHttpRequest(){
+//        @Cleanup var socket = new Socket();
+//        var inetAddress = new InetSocketAddress("93.175.204.87", 8080);
+//        socket.connect(inetAddress);
+//
+//    }
 
 
 }
