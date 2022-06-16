@@ -24,6 +24,8 @@
         <module>lesson8-declarative-data-processing</module>
         <module>lesson9-concurrency</module>
         <module>lesson10</module>
+        <module>lesson11-web</module>
+        <module>lesson12-java-networking</module>
     </modules>
 
     <dependencies>
